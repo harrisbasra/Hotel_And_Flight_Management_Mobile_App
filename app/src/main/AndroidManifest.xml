@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@drawable/img22"
+        android:label="HotoLights"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.FASTLogistics"
+        tools:targetApi="31">
+        <activity
+            android:name=".DBTESTER"
+            android:exported="false" />
+        <activity
+            android:name=".ViewMoney"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false"
+            android:label="@string/title_activity_view_money"
+            android:theme="@style/Theme.FASTLogistics.Fullscreen" />
+        <activity
+            android:name=".jgedxfgnedfxgnwdfxhnw"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false"
+            android:label="@string/title_activity_jgedxfgnedfxgnwdfxhnw"
+            android:theme="@style/Theme.FASTLogistics.Fullscreen" />
+        <activity
+            android:name=".PaymentModule"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false"
+            android:label="@string/title_activity_payment_module"
+            android:theme="@style/Theme.FASTLogistics.Fullscreen" />
+        <activity
+            android:name=".ViewProfile"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false"
+            android:label="@string/title_activity_view_profile"
+            android:theme="@style/Theme.FASTLogistics.Fullscreen" />
+        <activity
+            android:name=".DemographicData"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false"
+            android:label="@string/title_activity_demographic_data"
+            android:theme="@style/Theme.FASTLogistics.Fullscreen" />
+        <activity
+            android:name=".ViewRooms"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false"
+            android:label="@string/title_activity_view_rooms"
+            android:theme="@style/Theme.FASTLogistics.Fullscreen" />
+        <activity
+            android:name=".BookFlights"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false"
+            android:label="@string/title_activity_book_flights"
+            android:theme="@style/Theme.FASTLogistics.Fullscreen" />
+        <activity
+            android:name=".BookRoom"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false"
+            android:label="@string/title_activity_book_room"
+            android:theme="@style/Theme.FASTLogistics.Fullscreen" />
+        <activity
+            android:name=".ViewReports"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false"
+            android:label="@string/title_activity_view_reports"
+            android:theme="@style/Theme.FASTLogistics.Fullscreen" />
+        <activity
+            android:name=".AddString"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false"
+            android:label="@string/title_activity_add_string"
+            android:theme="@style/Theme.FASTLogistics.Fullscreen" />
+        <activity
+            android:name=".Addprogress"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false"
+            android:label="@string/title_activity_addprogress"
+            android:theme="@style/Theme.FASTLogistics.Fullscreen" />
+        <activity
+            android:name=".MainMenuuu"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false"
+            android:label="@string/title_activity_main_menuuu"
+            android:theme="@style/Theme.FASTLogistics.Fullscreen" />
+        <activity
+            android:name=".FullscreenActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.FASTLogistics.Fullscreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
