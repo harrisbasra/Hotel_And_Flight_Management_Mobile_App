@@ -98,6 +98,40 @@ public class ViewMoney extends AppCompatActivity {
         binding = ActivityViewMoneyBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        String Money1= "0";
+        try {
+            FileInputStream fin = openFileInput("hotelmoney.txt");
+            int a;
+            StringBuilder temp = new StringBuilder();
+            while ((a = fin.read()) != -1) {
+                temp.append((char)a);
+            }
+            Money1 = temp.toString();
+            fin.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        String Money2= "0";
+        try {
+            FileInputStream fin = openFileInput("flightmoney.txt");
+            int a;
+            StringBuilder temp = new StringBuilder();
+            while ((a = fin.read()) != -1) {
+                temp.append((char)a);
+            }
+            Money2 = temp.toString();
+            fin.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        binding.textView2.setText("Money Present: "+String.valueOf(Float.valueOf(Money1)+Float.valueOf(Money2)));
+        binding.textView5.setText("Money By Hotels: "+Money1);
+        binding.textView4.setText("Money By Flights: "+Money2);
+        binding.textView6.setText("Mantainance Cost: $-50");
+        binding.textView10.setText("Total: "+String.valueOf(Float.valueOf(Money1)+Float.valueOf(Money2)-50));
 
     }
 

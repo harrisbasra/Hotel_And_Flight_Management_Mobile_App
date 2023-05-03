@@ -110,8 +110,7 @@ public class FullscreenActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Intent i = new Intent(FullscreenActivity.this, ViewRooms.class);
-        startActivity(i);
+
         super.onCreate(savedInstanceState);
 
         binding = ActivityFullscreenBinding.inflate(getLayoutInflater());
@@ -216,6 +215,8 @@ public class FullscreenActivity extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
                                 Starter = new Intent(FullscreenActivity.this, MainMenuuu.class);
+                                Starter.putExtra("Username",LoginInfo.split("|")[0]);
+                                Starter.putExtra("Password",LoginInfo.split("|")[1]);
                             }
                             else if(Users[lk].equals("2"+LoginInfo)){
                                 FileOutputStream fos = null;
@@ -228,6 +229,8 @@ public class FullscreenActivity extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
                                 Starter = new Intent(FullscreenActivity.this, MainMenuuu.class);
+                                Starter.putExtra("Username",LoginInfo.split("|")[0]);
+                                Starter.putExtra("Password",LoginInfo.split("|")[2]);
                             }
                             startActivity(Starter);
                         }

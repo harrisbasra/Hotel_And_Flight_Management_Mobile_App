@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,30 +20,15 @@ import android.widget.Toast;
 
 import com.sda.fastlogistics.databinding.ActivityBookFlightsBinding;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 public class BookFlights extends AppCompatActivity {
-    /**
-     * Whether or not the system UI should be auto-hidden after
-     * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
-     */
     private static final boolean AUTO_HIDE = true;
-
-    /**
-     * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
-     * user interaction before hiding the system UI.
-     */
     private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
-
-    /**
-     * Some older devices needs a small delay between UI widget updates
-     * and a change of the status and navigation bar.
-     */
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler(Looper.myLooper());
-
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
         @Override
@@ -140,6 +126,11 @@ public class BookFlights extends AppCompatActivity {
             ArrayAdapter<String> roomType = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, RoomType);
             binding.spinnerA3.setAdapter(roomType);
         }
+        else{
+            String Empty[] = {};
+            ArrayAdapter<String> roomType = new ArrayAdapter<String>(BookFlights.this, android.R.layout.simple_spinner_dropdown_item, Empty);
+            binding.spinnerA3.setAdapter(roomType);
+        }
 
         binding.spinnerA2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -147,6 +138,11 @@ public class BookFlights extends AppCompatActivity {
                 String RoomType[] = db.getAvailableDepartureTimes(binding.spinnerA.getSelectedItem().toString(), binding.spinnerA2.getSelectedItem().toString());
                 if(!(RoomType ==null)){
                     ArrayAdapter<String> roomType = new ArrayAdapter<String>(BookFlights.this, android.R.layout.simple_spinner_dropdown_item, RoomType);
+                    binding.spinnerA3.setAdapter(roomType);
+                }
+                else{
+                    String Empty[] = {};
+                    ArrayAdapter<String> roomType = new ArrayAdapter<String>(BookFlights.this, android.R.layout.simple_spinner_dropdown_item, Empty);
                     binding.spinnerA3.setAdapter(roomType);
                 }
             }
@@ -163,6 +159,11 @@ public class BookFlights extends AppCompatActivity {
             ArrayAdapter<String> roomType = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, Classtypes);
             binding.cypher2.setAdapter(roomType);
         }
+        else{
+            String Empty[] = {};
+            ArrayAdapter<String> roomType = new ArrayAdapter<String>(BookFlights.this, android.R.layout.simple_spinner_dropdown_item, Empty);
+            binding.cypher2.setAdapter(roomType);
+        }
 
         binding.spinnerA3.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -170,6 +171,11 @@ public class BookFlights extends AppCompatActivity {
                 String Classtypes[] = db.getAvailableFlightClasses(binding.spinnerA.getSelectedItem().toString(), binding.spinnerA2.getSelectedItem().toString(), binding.spinnerA3.getSelectedItem().toString());
                 if(!(Classtypes ==null)){
                     ArrayAdapter<String> roomType = new ArrayAdapter<String>(BookFlights.this, android.R.layout.simple_spinner_dropdown_item, Classtypes);
+                    binding.cypher2.setAdapter(roomType);
+                }
+                else{
+                    String Empty[] = {};
+                    ArrayAdapter<String> roomType = new ArrayAdapter<String>(BookFlights.this, android.R.layout.simple_spinner_dropdown_item, Empty);
                     binding.cypher2.setAdapter(roomType);
                 }
             }
@@ -194,7 +200,36 @@ public class BookFlights extends AppCompatActivity {
                     int FlightSeat = Integer.valueOf(db.getAvailableSeatNumber(DepartureCity, ArrivalCity, Date, Class)[0]);
                     int FlightNumber = Integer.valueOf(db.getAvailableSeatNumber(DepartureCity, ArrivalCity, Date, Class)[1]);
 
-                    if(!ID.equals("-1") && !(FlightSeat ==-1)){
+                    String Price = "0";
+                    Toast.makeText(BookFlights.this, FlightSeat+"'"+FlightNumber, Toast.LENGTH_SHORT).show();
+                    if(!ID.equals("-1")){
+                        Price = String.valueOf(db.getFlightPrice(FlightNumber, Class));
+                        ////////////////////////////////////////////////////////////////
+                        String Money1= "0";
+                        try {
+                            FileInputStream fin = openFileInput("flightmoney.txt");
+                            int a;
+                            StringBuilder temp = new StringBuilder();
+                            while ((a = fin.read()) != -1) {
+                                temp.append((char)a);
+                            }
+                            Money1 = temp.toString();
+                            fin.close();
+                        }
+                        catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        FileOutputStream fos = null;
+                        Money1 = String.valueOf(Float.valueOf(Money1) +Float.valueOf(Price));
+                        try {
+                            fos = openFileOutput("flightmoney.txt", Context.MODE_PRIVATE);
+                            fos.write(Money1.getBytes());
+                            fos.flush();
+                            fos.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         db.FinallyBookFlight(Integer.valueOf(ID), FlightNumber, Date, FlightSeat);
                         startActivity(new Intent(BookFlights.this, MainMenuuu.class));
                     }

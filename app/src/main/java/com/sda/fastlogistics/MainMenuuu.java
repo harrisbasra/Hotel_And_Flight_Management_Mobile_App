@@ -149,6 +149,10 @@ public class MainMenuuu extends AppCompatActivity {
         TextView t7 = findViewById(R.id.button9);
         TextView t9 = findViewById(R.id.button12);
 
+        Intent intent = getIntent();
+
+        String Username = intent.getStringExtra("Username");
+        String Password = intent.getStringExtra("Password");
 
 
         if(Decider.equals("2")){
@@ -185,6 +189,8 @@ public class MainMenuuu extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                 Intent i = new Intent(MainMenuuu.this, ViewProfile.class);
+                i.putExtra("Username", Username);
+                i.putExtra("Password", Password);
                 startActivity(i);
                 }
             });

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -450,7 +451,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
             String query = "SELECT DISTINCT FlightClass FROM FlightSeats " +
                     "WHERE Flightno IN " +
                     "(SELECT Flightno FROM FlightsDetail WHERE DepartureCity = ? AND ArrivalCity = ? AND DepartureTime = ? AND FlightStatus = 'Available') " +
-                    "AND SeatStatus = 'Available'";
+                    "AND SeatStatus = 'Unreserved'";
             cursor = mDatabase.rawQuery(query, new String[]{departureCity, arrivalCity, departureTime});
             while (cursor.moveToNext()) {
                 String flightClass = cursor.getString(cursor.getColumnIndex("FlightClass"));
@@ -465,6 +466,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
     }
 
     public String[] getAvailableSeatNumber(String departureCity, String arrivalCity, String departureTime, String flightClass) {
+
         SQLiteDatabase db = this.getReadableDatabase();
         String[] result = new String[2];
 
@@ -472,7 +474,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
         String query = "SELECT FlightSeats.SeatNumber, FlightsDetail.Flightno " +
                 "FROM FlightSeats " +
                 "JOIN FlightsDetail ON FlightSeats.Flightno = FlightsDetail.Flightno AND FlightSeats.DepartureTime = FlightsDetail.DepartureTime " +
-                "WHERE FlightsDetail.DepartureCity = ? AND FlightsDetail.ArrivalCity = ? AND FlightsDetail.DepartureTime = ? AND FlightSeats.SeatStatus = 'Available' AND FlightSeats.FlightClass = ? " +
+                "WHERE FlightsDetail.DepartureCity = ? AND FlightsDetail.ArrivalCity = ? AND FlightsDetail.DepartureTime = ? AND FlightSeats.SeatStatus = 'Unreserved' AND FlightSeats.FlightClass = ? " +
                 "ORDER BY FlightSeats.SeatNumber ASC " +
                 "LIMIT 1";
 
@@ -510,10 +512,41 @@ public class MyDBHelper extends SQLiteOpenHelper {
 
         db.close();
     }
+    public float getRoomPrice(int hotelId, int roomNo) {
+        float price = -1.0f; // default value to return if no price found
+        SQLiteDatabase db = getReadableDatabase();
+        String query = "SELECT Price FROM RoomsDetails WHERE HotelId = ? AND RoomNo = ?";
+        String[] selectionArgs = {String.valueOf(hotelId), String.valueOf(roomNo)};
+        Cursor cursor = db.rawQuery(query, selectionArgs);
+        if (cursor.moveToFirst()) {
+            price = cursor.getFloat(cursor.getColumnIndex("Price"));
+        }
+        cursor.close();
+        db.close();
+        return price;
+    }
+    public float getFlightPrice(int flightNo, String flightClass) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        String query = "SELECT SeatPrice FROM FlightSeats WHERE Flightno = ? AND FlightClass = ?";
+        String[] args = {Integer.toString(flightNo), flightClass};
+
+        Cursor cursor = db.rawQuery(query, args);
+
+        float price = -1;
+
+        if (cursor.moveToFirst()) {
+            price = cursor.getFloat(cursor.getColumnIndex("SeatPrice"));
+        }
+
+        cursor.close();
+        db.close();
+
+        return price;
+    }
 
 
-
-}
+    }
 
 
 

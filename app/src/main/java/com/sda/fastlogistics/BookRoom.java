@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +19,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.sda.fastlogistics.databinding.ActivityBookRoomBinding;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -163,11 +168,40 @@ public class BookRoom extends AppCompatActivity {
                     String City = binding.spinnerA.getSelectedItem().toString();
                     int HotelID = db.getHotelIdByName(binding.spinnerA3.getSelectedItem().toString());
 
+                    String Price = "0";
                     int RoomNum = Integer.valueOf(db.getAvailableRooms(HotelID, binding.cypher2.getSelectedItem().toString()));
                     String Date = binding.dateget.getText().toString();
 
                     if(!ID.equals("-1")){
+                        Price = String.valueOf(db.getRoomPrice(HotelID, RoomNum));
+                        ////////////////////////////////////////////////////////////////
+                        String Money1= "0";
+                        try {
+                            FileInputStream fin = openFileInput("hotelmoney.txt");
+                            int a;
+                            StringBuilder temp = new StringBuilder();
+                            while ((a = fin.read()) != -1) {
+                                temp.append((char)a);
+                            }
+                            Money1 = temp.toString();
+                            fin.close();
+                        }
+                        catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        FileOutputStream fos = null;
+                        Money1 = String.valueOf(Float.valueOf(Money1) +Float.valueOf(Price));
+                        try {
+                            fos = openFileOutput("hotelmoney.txt", Context.MODE_PRIVATE);
+                            fos.write(Money1.getBytes());
+                            fos.flush();
+                            fos.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         db.FinallybookRoom(Integer.valueOf(ID), HotelID, RoomNum, Date);
+                        ////////////////////////////////////////////////////////////////
                         startActivity(new Intent(BookRoom.this, MainMenuuu.class));
                     }
                     else{
