@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +13,9 @@ import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowInsets;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.sda.fastlogistics.databinding.ActivityBookFlightsBinding;
 
@@ -97,6 +101,110 @@ public class BookFlights extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         mVisible = true;
+
+
+        binding.button11.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(BookFlights.this, PaymentModule.class));
+            }
+        });
+
+
+
+        MyDBHelper db = new MyDBHelper(this);
+        String Hi[] = db.getAvailableDepartureCities();
+        ArrayAdapter<String> citites = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, Hi);
+        binding.spinnerA.setAdapter(citites);
+
+        String Je[] = db.getAvailableArrivalCities(binding.spinnerA.getSelectedItem().toString());
+        ArrayAdapter<String> hotells = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, Je);
+        binding.spinnerA2.setAdapter(hotells);
+
+        binding.spinnerA.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String Je[] = db.getAvailableArrivalCities(binding.spinnerA.getSelectedItem().toString());
+                ArrayAdapter<String> hotells = new ArrayAdapter<String>(BookFlights.this, android.R.layout.simple_spinner_dropdown_item, Je);
+                binding.spinnerA2.setAdapter(hotells);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        String RoomType[] = db.getAvailableDepartureTimes(binding.spinnerA.getSelectedItem().toString(), binding.spinnerA2.getSelectedItem().toString());
+        if(!(RoomType ==null)){
+            ArrayAdapter<String> roomType = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, RoomType);
+            binding.spinnerA3.setAdapter(roomType);
+        }
+
+        binding.spinnerA2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String RoomType[] = db.getAvailableDepartureTimes(binding.spinnerA.getSelectedItem().toString(), binding.spinnerA2.getSelectedItem().toString());
+                if(!(RoomType ==null)){
+                    ArrayAdapter<String> roomType = new ArrayAdapter<String>(BookFlights.this, android.R.layout.simple_spinner_dropdown_item, RoomType);
+                    binding.spinnerA3.setAdapter(roomType);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
+        String Classtypes[] = db.getAvailableFlightClasses(binding.spinnerA.getSelectedItem().toString(), binding.spinnerA2.getSelectedItem().toString(), binding.spinnerA3.getSelectedItem().toString());
+        if(!(Classtypes ==null)){
+            ArrayAdapter<String> roomType = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, Classtypes);
+            binding.cypher2.setAdapter(roomType);
+        }
+
+        binding.spinnerA3.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String Classtypes[] = db.getAvailableFlightClasses(binding.spinnerA.getSelectedItem().toString(), binding.spinnerA2.getSelectedItem().toString(), binding.spinnerA3.getSelectedItem().toString());
+                if(!(Classtypes ==null)){
+                    ArrayAdapter<String> roomType = new ArrayAdapter<String>(BookFlights.this, android.R.layout.simple_spinner_dropdown_item, Classtypes);
+                    binding.cypher2.setAdapter(roomType);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
+        binding.button11.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!(binding.cypher4.getText().toString().equals(""))){
+                    String ID = String.valueOf(db.getCustomerIdFromName(binding.cypher4.getText().toString()));
+                    String DepartureCity = binding.spinnerA.getSelectedItem().toString();
+                    String ArrivalCity = binding.spinnerA2.getSelectedItem().toString();
+                    String Date = binding.spinnerA3.getSelectedItem().toString();
+                    String Class = binding.cypher2.getSelectedItem().toString();
+
+                    int FlightSeat = Integer.valueOf(db.getAvailableSeatNumber(DepartureCity, ArrivalCity, Date, Class)[0]);
+                    int FlightNumber = Integer.valueOf(db.getAvailableSeatNumber(DepartureCity, ArrivalCity, Date, Class)[1]);
+
+                    if(!ID.equals("-1") && !(FlightSeat ==-1)){
+                        db.FinallyBookFlight(Integer.valueOf(ID), FlightNumber, Date, FlightSeat);
+                        startActivity(new Intent(BookFlights.this, MainMenuuu.class));
+                    }
+                    else{
+                        Toast.makeText(BookFlights.this, "No Such Customers Exist", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+
 
 
 

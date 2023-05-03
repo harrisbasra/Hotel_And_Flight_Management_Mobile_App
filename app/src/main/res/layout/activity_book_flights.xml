@@ -45,8 +45,27 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.249" />
 
-        <EditText
+        <Spinner
             android:id="@+id/spinnerA"
+            android:layout_width="303dp"
+            android:layout_height="57dp"
+            android:background="@drawable/buttonround"
+            android:ems="10"
+            android:gravity="center_vertical"
+            android:hapticFeedbackEnabled="true"
+            android:hint="Select Departure City"
+            android:padding="10sp"
+            android:spinnerMode="dialog"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.323" />
+
+        <Spinner
+            android:id="@+id/spinnerA2"
             android:layout_width="303dp"
             android:layout_height="57dp"
             android:background="@drawable/buttonround"
@@ -62,28 +81,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.323" />
-
-        <EditText
-            android:id="@+id/spinnerA2"
-            android:layout_width="303dp"
-            android:layout_height="57dp"
-            android:background="@drawable/buttonround"
-            android:ems="10"
-            android:gravity="center_vertical"
-            android:hapticFeedbackEnabled="true"
-            android:hint="Select Time"
-            android:padding="10sp"
-            android:spinnerMode="dialog"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textStyle="normal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.41" />
 
-        <EditText
+        <Spinner
             android:id="@+id/spinnerA3"
             android:layout_width="303dp"
             android:layout_height="57dp"
@@ -91,7 +91,7 @@
             android:ems="10"
             android:gravity="center_vertical"
             android:hapticFeedbackEnabled="true"
-            android:hint="Select Quantity"
+            android:hint="Select Time"
             android:padding="10sp"
             android:spinnerMode="dialog"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -118,14 +118,14 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.753" />
 
-        <TextView
+        <Spinner
             android:id="@+id/cypher2"
             android:layout_width="303dp"
             android:layout_height="57dp"
             android:background="@drawable/buttonround"
             android:ems="10"
             android:gravity="clip_horizontal"
-            android:hint="Enter Seat Class"
+            android:hint="Enter Seat Type"
             android:padding="15sp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textStyle="normal"
@@ -142,7 +142,7 @@
             android:background="@drawable/buttonround"
             android:ems="10"
             android:gravity="clip_horizontal"
-            android:hint="Enter Departure City"
+            android:hint="Enter Name"
             android:padding="15sp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textStyle="normal"

@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +13,9 @@ import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowInsets;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.sda.fastlogistics.databinding.ActivityViewRoomsBinding;
 
@@ -97,6 +101,97 @@ public class ViewRooms extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         mVisible = true;
+
+        MyDBHelper db = new MyDBHelper(this);
+        String Hi[] = db.getCitiesWithAvailableHotels();
+        ArrayAdapter<String> citites = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, Hi);
+        binding.spinnerA.setAdapter(citites);
+
+        String Je[] = db.getAvailableHotelsInCity(binding.spinnerA.getSelectedItem().toString());
+        ArrayAdapter<String> hotells = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, Je);
+        binding.spinnerB.setAdapter(hotells);
+
+        String RoomType[] = db.getAvailableRoomTypesInHotel(binding.spinnerB.getSelectedItem().toString(), binding.spinnerA.getSelectedItem().toString());
+        if(!(RoomType ==null)){
+            ArrayAdapter<String> roomType = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, RoomType);
+            binding.spinner4.setAdapter(roomType);
+        }
+
+        binding.spinnerA.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String Je[] = db.getAvailableHotelsInCity(binding.spinnerA.getSelectedItem().toString());
+                ArrayAdapter<String> hotells = new ArrayAdapter<String>(ViewRooms.this, android.R.layout.simple_spinner_dropdown_item, Je);
+                binding.spinnerB.setAdapter(hotells);
+                String City = binding.spinnerA.getSelectedItem().toString();
+                int HotelID = db.getHotelIdByName(binding.spinnerB.getSelectedItem().toString());
+                String RoomNum[] = db.getAvailableRooms2(HotelID, binding.spinner4.getSelectedItem().toString());
+                if(RoomNum==null){
+                    RoomNum = new String[]{};
+                }
+                ArrayAdapter<String> roomType = new ArrayAdapter<String>(ViewRooms.this, android.R.layout.simple_spinner_dropdown_item, RoomNum);
+                binding.cypher.setAdapter(roomType);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        binding.spinnerB.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String RoomType[] = db.getAvailableRoomTypesInHotel(binding.spinner4.getSelectedItem().toString(), binding.spinnerA.getSelectedItem().toString());
+                if(!(RoomType ==null)){
+                    ArrayAdapter<String> roomType = new ArrayAdapter<String>(ViewRooms.this, android.R.layout.simple_spinner_dropdown_item, RoomType);
+                    binding.spinner4.setAdapter(roomType);
+                    String City = binding.spinnerA.getSelectedItem().toString();
+                    int HotelID = db.getHotelIdByName(binding.spinnerB.getSelectedItem().toString());
+                    String RoomNum[] = db.getAvailableRooms2(HotelID, binding.spinner4.getSelectedItem().toString());
+                    if(RoomNum==null){
+                        RoomNum = new String[]{};
+                    }
+                    ArrayAdapter<String> roomTypeo = new ArrayAdapter<String>(ViewRooms.this, android.R.layout.simple_spinner_dropdown_item, RoomNum);
+                    binding.cypher.setAdapter(roomTypeo);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
+        String City = binding.spinnerA.getSelectedItem().toString();
+        int HotelID = db.getHotelIdByName(binding.spinnerB.getSelectedItem().toString());
+        String RoomNum[] = db.getAvailableRooms2(HotelID, binding.spinner4.getSelectedItem().toString());
+
+        ArrayAdapter<String> roomType = new ArrayAdapter<String>(ViewRooms.this, android.R.layout.simple_spinner_dropdown_item, RoomNum);
+        binding.cypher.setAdapter(roomType);
+
+
+
+        binding.spinner4.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String City = binding.spinnerA.getSelectedItem().toString();
+                int HotelID = db.getHotelIdByName(binding.spinnerB.getSelectedItem().toString());
+                String RoomNum[] = db.getAvailableRooms2(HotelID, binding.spinner4.getSelectedItem().toString());
+                if(RoomNum==null){
+                    RoomNum = new String[]{};
+                }
+                ArrayAdapter<String> roomType = new ArrayAdapter<String>(ViewRooms.this, android.R.layout.simple_spinner_dropdown_item, RoomNum);
+                binding.cypher.setAdapter(roomType);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
 
     }
 

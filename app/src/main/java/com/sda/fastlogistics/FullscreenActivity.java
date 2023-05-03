@@ -110,7 +110,7 @@ public class FullscreenActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Intent i = new Intent(FullscreenActivity.this, DBTESTER.class);
+        Intent i = new Intent(FullscreenActivity.this, ViewRooms.class);
         startActivity(i);
         super.onCreate(savedInstanceState);
 

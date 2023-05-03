@@ -45,7 +45,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.249" />
 
-        <EditText
+        <Spinner
             android:id="@+id/spinnerA"
             android:layout_width="303dp"
             android:layout_height="57dp"
@@ -62,28 +62,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.323" />
+            app:layout_constraintVertical_bias="0.362" />
 
-        <EditText
-            android:id="@+id/spinnerA2"
-            android:layout_width="303dp"
-            android:layout_height="57dp"
-            android:background="@drawable/buttonround"
-            android:ems="10"
-            android:gravity="center_vertical"
-            android:hapticFeedbackEnabled="true"
-            android:hint="Select City"
-            android:padding="10sp"
-            android:spinnerMode="dialog"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textStyle="normal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.41" />
-
-        <EditText
+        <Spinner
             android:id="@+id/spinnerA3"
             android:layout_width="303dp"
             android:layout_height="57dp"
@@ -99,24 +80,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/cypher"
-            android:layout_width="303dp"
-            android:layout_height="123dp"
-            android:background="@drawable/buttonround"
-            android:ems="10"
-            android:gravity="clip_horizontal"
-            android:hint="Comments If Any"
-            android:padding="15sp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textStyle="normal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.753" />
+            app:layout_constraintVertical_bias="0.466" />
 
         <Spinner
             android:id="@+id/cypher2"
@@ -133,10 +98,27 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.595" />
+            app:layout_constraintVertical_bias="0.576" />
 
         <EditText
-            android:id="@+id/cypher4"
+            android:id="@+id/dateget"
+            android:layout_width="303dp"
+            android:layout_height="57dp"
+            android:background="@drawable/buttonround"
+            android:ems="10"
+            android:gravity="clip_horizontal"
+            android:hint="Enter Final Date (YYYY-MM-DD)"
+            android:padding="15sp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.691" />
+
+        <EditText
+            android:id="@+id/idget"
             android:layout_width="303dp"
             android:layout_height="57dp"
             android:background="@drawable/buttonround"
@@ -150,7 +132,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.235" />
+            app:layout_constraintVertical_bias="0.259" />
 
         <Button
             android:id="@+id/button11"

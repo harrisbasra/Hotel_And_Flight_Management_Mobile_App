@@ -2,9 +2,15 @@ package com.sda.fastlogistics;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 
 public class MyDBHelper extends SQLiteOpenHelper {
@@ -89,6 +95,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+
     }
 
     @Override
@@ -196,9 +203,315 @@ public class MyDBHelper extends SQLiteOpenHelper {
         values.put("Datefrom", dateFrom);
         values.put("Dateto", dateTo);
         db.insert("Roombooking", null, values);
+
+    }
+    public String[] getCitiesWithAvailableHotels() {
+        SQLiteDatabase db = getReadableDatabase();
+
+        String query = "SELECT Hotelcity FROM HotelsDetails WHERE HotelStatus = 'Available'";
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        String[] cities = new String[cursor.getCount()];
+        int i = 0;
+
+        while (cursor.moveToNext()) {
+            String city = cursor.getString(0);
+            cities[i++] = city;
+        }
+
+        return cities;
+    }
+    public String[] getAvailableHotelsInCity(String cityName) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        String query = "SELECT HotelName FROM HotelsDetails WHERE HotelStatus = 'Available' AND Hotelcity = ?";
+
+        Cursor cursor = db.rawQuery(query, new String[] { cityName });
+
+        String[] hotels = new String[cursor.getCount()];
+        int i = 0;
+
+        while (cursor.moveToNext()) {
+            String hotelName = cursor.getString(0);
+            hotels[i++] = hotelName;
+        }
+
+        cursor.close();
+        db.close();
+
+        return hotels;
+    }
+
+    public String[] getAvailableRoomTypesInHotel(String hotelName, String cityName) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        String hotelIdQuery = "SELECT HotelId FROM HotelsDetails WHERE HotelName = ? AND Hotelcity = ?";
+        Cursor hotelIdCursor = db.rawQuery(hotelIdQuery, new String[] { hotelName, cityName });
+
+        if (!hotelIdCursor.moveToFirst()) {
+            // Hotel not found in database
+            hotelIdCursor.close();
+            db.close();
+            return null;
+        }
+
+        int hotelId = hotelIdCursor.getInt(0);
+        hotelIdCursor.close();
+
+        String roomTypeQuery = "SELECT Type FROM RoomsDetails WHERE HotelId = ? AND Price > 0";
+        Cursor roomTypeCursor = db.rawQuery(roomTypeQuery, new String[] { String.valueOf(hotelId) });
+
+        String[] roomTypes = new String[roomTypeCursor.getCount()];
+        int i = 0;
+
+        while (roomTypeCursor.moveToNext()) {
+            String roomType = roomTypeCursor.getString(0);
+            roomTypes[i++] = roomType;
+        }
+
+        return roomTypes;
+    }
+    public int getCustomerIdFromName(String customerName) {
+        int customerId = -1;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT CustomerId FROM CustomersDetails WHERE CustomerName = ?", new String[]{customerName});
+        if (cursor.moveToFirst()) {
+            customerId = cursor.getInt(0);
+        }
+        cursor.close();
+        db.close();
+        return customerId;
+    }
+    public int getHotelIdByName(String hotelName) {
+        int hotelid = -1;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT HotelID FROM HotelsDetails  WHERE HotelName = ?", new String[]{hotelName});
+        if (cursor.moveToFirst()) {
+            hotelid = cursor.getInt(0);
+        }
+        cursor.close();
+        db.close();
+        return hotelid;
+    }
+    public String getAvailableRooms(int hotelId, String roomType) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] availableRooms = null;
+
+        String query = "SELECT RoomNo FROM RoomsDetails " +
+                "WHERE HotelId = ? AND Type = ? " +
+                "AND RoomNo NOT IN " +
+                "(SELECT RoomNo FROM RoomBooking " +
+                "WHERE HotelId = ? AND DateTo >= ? AND DateFrom <= ?)";
+
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String currentDate = sdf.format(calendar.getTime());
+
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(hotelId), roomType, String.valueOf(hotelId), currentDate, currentDate});
+
+        if (cursor.moveToFirst()) {
+            availableRooms = new String[cursor.getCount()];
+            int index = 0;
+            do {
+                availableRooms[index++] = cursor.getString(0);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        if(availableRooms!=null)
+        return availableRooms[0];
+        return null;
+    }
+
+    public String[] getAvailableRooms2(int hotelId, String roomType) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] availableRooms = null;
+
+        String query = "SELECT RoomNo FROM RoomsDetails " +
+                "WHERE HotelId = ? AND Type = ? " +
+                "AND RoomNo NOT IN " +
+                "(SELECT RoomNo FROM RoomBooking " +
+                "WHERE HotelId = ? AND DateTo >= ? AND DateFrom <= ?)";
+
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String currentDate = sdf.format(calendar.getTime());
+
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(hotelId), roomType, String.valueOf(hotelId), currentDate, currentDate});
+
+        if (cursor.moveToFirst()) {
+            availableRooms = new String[cursor.getCount()];
+            int index = 0;
+            do {
+                availableRooms[index++] = cursor.getString(0);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        if(availableRooms!=null)
+            return availableRooms;
+        return null;
+    }
+
+    public void FinallybookRoom(int customerId, int hotelId, int roomNo, String dateTo) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Get the current date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date currentDate = new Date();
+        String dateFrom = dateFormat.format(currentDate);
+
+        // Prepare the values to be inserted
+        ContentValues values = new ContentValues();
+        values.put("Cust_ID", customerId);
+        values.put("HotelId", hotelId);
+        values.put("RoomNo", roomNo);
+        values.put("Datefrom", dateFrom);
+        values.put("Dateto", dateTo);
+
+        // Insert the row into the table
+        db.insert("RoomBooking", null, values);
+        String[] args = {Integer.toString(hotelId), Integer.toString(roomNo)};
+        db.delete("RoomsDetails", "HotelId=? AND RoomNo=?", args);
         db.close();
     }
-    // Methods to return and insert data will go here
+    /////////////////////////////////////////
+    public String[] getAvailableDepartureCities() {
+        SQLiteDatabase db = getReadableDatabase();
+        String[] projection = {"DepartureCity"};
+        String selection = "FlightStatus = ?";
+        String[] selectionArgs = {"Available"};
+        Cursor cursor = db.query(
+                "FlightsDetail",
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+        List<String> departureCities = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            String departureCity = cursor.getString(cursor.getColumnIndexOrThrow("DepartureCity"));
+            departureCities.add(departureCity);
+        }
+        cursor.close();
+        return departureCities.toArray(new String[0]);
+    }
+
+    public String[] getAvailableArrivalCities(String departureCity) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT DISTINCT ArrivalCity FROM FlightsDetail WHERE DepartureCity = ? AND FlightStatus = ?";
+        String[] selectionArgs = {departureCity, "Available"};
+
+        Cursor cursor = db.rawQuery(query, selectionArgs);
+        List<String> arrivalCities = new ArrayList<>();
+
+        if (cursor.moveToFirst()) {
+            do {
+                arrivalCities.add(cursor.getString(cursor.getColumnIndex("ArrivalCity")));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        return arrivalCities.toArray(new String[0]);
+    }
+
+    public String[] getAvailableDepartureTimes(String departureCity, String arrivalCity) {
+        SQLiteDatabase db = getReadableDatabase();
+        String selectQuery = "SELECT DepartureTime FROM FlightsDetail WHERE DepartureCity = ? AND ArrivalCity = ? AND FlightStatus = 'Available'";
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{departureCity, arrivalCity});
+
+        String[] departureTimes = new String[cursor.getCount()];
+        int index = 0;
+
+        if (cursor.moveToFirst()) {
+            do {
+                String departureTime = cursor.getString(cursor.getColumnIndex("DepartureTime"));
+                departureTimes[index++] = departureTime;
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return departureTimes;
+    }
+
+    public String[] getAvailableFlightClasses(String departureCity, String arrivalCity, String departureTime) {
+        ArrayList<String> flightClasses = new ArrayList<>();
+        SQLiteDatabase mDatabase = getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            String query = "SELECT DISTINCT FlightClass FROM FlightSeats " +
+                    "WHERE Flightno IN " +
+                    "(SELECT Flightno FROM FlightsDetail WHERE DepartureCity = ? AND ArrivalCity = ? AND DepartureTime = ? AND FlightStatus = 'Available') " +
+                    "AND SeatStatus = 'Available'";
+            cursor = mDatabase.rawQuery(query, new String[]{departureCity, arrivalCity, departureTime});
+            while (cursor.moveToNext()) {
+                String flightClass = cursor.getString(cursor.getColumnIndex("FlightClass"));
+                flightClasses.add(flightClass);
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return flightClasses.toArray(new String[flightClasses.size()]);
+    }
+
+    public String[] getAvailableSeatNumber(String departureCity, String arrivalCity, String departureTime, String flightClass) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] result = new String[2];
+
+        // Join tables to get the available seat
+        String query = "SELECT FlightSeats.SeatNumber, FlightsDetail.Flightno " +
+                "FROM FlightSeats " +
+                "JOIN FlightsDetail ON FlightSeats.Flightno = FlightsDetail.Flightno AND FlightSeats.DepartureTime = FlightsDetail.DepartureTime " +
+                "WHERE FlightsDetail.DepartureCity = ? AND FlightsDetail.ArrivalCity = ? AND FlightsDetail.DepartureTime = ? AND FlightSeats.SeatStatus = 'Available' AND FlightSeats.FlightClass = ? " +
+                "ORDER BY FlightSeats.SeatNumber ASC " +
+                "LIMIT 1";
+
+        Cursor cursor = db.rawQuery(query, new String[]{departureCity, arrivalCity, departureTime, flightClass});
+
+        // Check if there is an available seat
+        if (cursor.moveToFirst()) {
+            result[0] = cursor.getString(0); // Get the seat number
+            result[1] = cursor.getString(1); // Get the flight number
+        } else {
+            result[0] = "-1"; // Set to -1 if there are no available seats
+            result[1] = "-1";
+        }
+
+        cursor.close();
+        db.close();
+
+        return result;
+    }
+
+    public void FinallyBookFlight(int customerId, int flightNo, String departureTime, int seatNo) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Insert the booking details into the FlightBookings table
+        ContentValues bookingValues = new ContentValues();
+        bookingValues.put("CustomerId", customerId);
+        bookingValues.put("Flightno", flightNo);
+        bookingValues.put("DepartureTime", departureTime);
+        bookingValues.put("SeatNumber", seatNo);
+        db.insert("FlightBookings", null, bookingValues);
+
+        // Delete the corresponding row from the FlightSeats table
+        String[] whereArgs = {String.valueOf(seatNo), String.valueOf(flightNo), departureTime};
+        db.delete("FlightSeats", "SeatNumber=? AND Flightno=? AND DepartureTime=?", whereArgs);
+
+        db.close();
+    }
+
+
 
 }
 

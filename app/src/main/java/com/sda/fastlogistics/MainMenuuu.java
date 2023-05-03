@@ -8,8 +8,10 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -192,7 +194,13 @@ public class MainMenuuu extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
 
-
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType("*/*");
+                    intent.putExtra(Intent.EXTRA_EMAIL, "harrisbasra@gmail.com");
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "HotoLight Feedbacks and Suggestions");
+                    if (intent.resolveActivity(getPackageManager()) != null) {
+                        startActivity(intent);
+                    }
                 }
             });
         }
@@ -238,6 +246,11 @@ public class MainMenuuu extends AppCompatActivity {
             t9.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse("mailto:"));
+                    startActivity(intent);
+
+
 
                 }
             });

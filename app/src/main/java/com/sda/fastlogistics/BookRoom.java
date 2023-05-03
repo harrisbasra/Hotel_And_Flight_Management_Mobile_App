@@ -13,7 +13,9 @@ import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowInsets;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.sda.fastlogistics.databinding.ActivityBookRoomBinding;
 
@@ -106,9 +108,74 @@ public class BookRoom extends AppCompatActivity {
             }
         });
 
-        String RoomType[] = {"Single", "Double", "Family"};
-        ArrayAdapter<String> roomType = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, RoomType);
-        binding.cypher2.setAdapter(roomType);
+
+
+        MyDBHelper db = new MyDBHelper(this);
+        String Hi[] = db.getCitiesWithAvailableHotels();
+        ArrayAdapter<String> citites = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, Hi);
+        binding.spinnerA.setAdapter(citites);
+
+        String Je[] = db.getAvailableHotelsInCity(binding.spinnerA.getSelectedItem().toString());
+        ArrayAdapter<String> hotells = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, Je);
+        binding.spinnerA3.setAdapter(hotells);
+
+        binding.spinnerA.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String Je[] = db.getAvailableHotelsInCity(binding.spinnerA.getSelectedItem().toString());
+                ArrayAdapter<String> hotells = new ArrayAdapter<String>(BookRoom.this, android.R.layout.simple_spinner_dropdown_item, Je);
+                binding.spinnerA3.setAdapter(hotells);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        String RoomType[] = db.getAvailableRoomTypesInHotel(binding.spinnerA3.getSelectedItem().toString(), binding.spinnerA.getSelectedItem().toString());
+        if(!(RoomType ==null)){
+            ArrayAdapter<String> roomType = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, RoomType);
+            binding.cypher2.setAdapter(roomType);
+        }
+
+        binding.spinnerA3.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String RoomType[] = db.getAvailableRoomTypesInHotel(binding.spinnerA3.getSelectedItem().toString(), binding.spinnerA.getSelectedItem().toString());
+                if(!(RoomType ==null)){
+                    ArrayAdapter<String> roomType = new ArrayAdapter<String>(BookRoom.this, android.R.layout.simple_spinner_dropdown_item, RoomType);
+                    binding.cypher2.setAdapter(roomType);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        binding.button11.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!(binding.dateget.getText().toString().equals("")&&binding.idget.getText().toString().equals(""))){
+                    String ID = String.valueOf(db.getCustomerIdFromName(binding.idget.getText().toString()));
+                    String City = binding.spinnerA.getSelectedItem().toString();
+                    int HotelID = db.getHotelIdByName(binding.spinnerA3.getSelectedItem().toString());
+
+                    int RoomNum = Integer.valueOf(db.getAvailableRooms(HotelID, binding.cypher2.getSelectedItem().toString()));
+                    String Date = binding.dateget.getText().toString();
+
+                    if(!ID.equals("-1")){
+                        db.FinallybookRoom(Integer.valueOf(ID), HotelID, RoomNum, Date);
+                        startActivity(new Intent(BookRoom.this, MainMenuuu.class));
+                    }
+                    else{
+                        Toast.makeText(BookRoom.this, "No Such Customers Exist", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
     }
 
     @Override
